@@ -16,7 +16,7 @@ JSiON.prototype = {
     position : function() { return JSiON.driver._position(arguments[0]); },
     bpm      : function() { return JSiON.driver._bpm(arguments[0]); },
 //----- operation
-    play     : function(mml, fadeInTime) { JSiON.driver._playmml(mml, fadeInTime); },
+    play     : function(mml, fadeInTime) { JSiON.driver._play(mml, fadeInTime); },
     stop     : function(fadeOutTime) { JSiON.driver._stop(fadeOutTime); },
     pause    : function() { JSiON.driver._pause(); },
     resume   : function() { JSiON.driver._resume(); },
@@ -28,8 +28,8 @@ JSiON.prototype = {
     onStreamStop : function() {},
     onFadeInComplete : function() {},
     onFadeOutComplete : function() {},
-    onChangeBPM : function(bpm) {}
-    onError : function(text) { alert(text); },
+    onChangeBPM : function(bpm) {},
+    onError : function(text) { alert(text); }
 };
 
 
