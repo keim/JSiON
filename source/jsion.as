@@ -11,23 +11,24 @@ package {
     import org.si.sion.events.*;
     import org.si.sion.utils.*;
     
-    [SWF(frameRate='10')]
+
     public class jsion extends Sprite {
         public var driver:SiONDriver = new SiONDriver();
-        public var dataList:Array = [];
         public var presetVoice:SiONPresetVoice = new SiONPresetVoice();
         public var soundTable:* = {};
         public var sionData:SiONData;
-        public var mml:String;
-        
+        public var muteTable:Array;
+
+
         function jsion() {
             Security.allowDomain("*");
             
             driver.autoStop = true;
-            driver.debugMode = true;
+            driver.debugMode = false;
 
+            muteTable　= null;
             sionData = new SiONData();
-            MMLTalksParser.initialize(driver, _onError, _onLoadingProgress);
+            MMLTalksParser.initialize(driver, _onLoadingError, _onLoadingProgress);
             
             // register javascript interfaces
             ExternalInterface.addCallback("_play",    _play);
@@ -38,14 +39,14 @@ package {
             ExternalInterface.addCallback("_pan",     _pan);
             ExternalInterface.addCallback("_position",_position);
             ExternalInterface.addCallback("_bpm",     _bpm);
+            ExternalInterface.addCallback("_loadsound",   _loadsound);
             ExternalInterface.addCallback("_presetvoice", _presetvoice);
+            ExternalInterface.addCallback("_applymutetable", _applymutetable);
 
             // register handlers
             driver.addEventListener(ErrorEvent.ERROR,             _onError);
             driver.addEventListener(SiONEvent.STREAM_START,       _onStreamStart);
             driver.addEventListener(SiONEvent.STREAM_STOP,        _onStreamStop);
-            driver.addEventListener(SiONEvent.FADE_IN_COMPLETE,   _onFadeInComplete);
-            driver.addEventListener(SiONEvent.FADE_OUT_COMPLETE,  _onFadeOutComplete);
             driver.addEventListener(SiONTrackEvent.CHANGE_BPM,    _onChangeBPM);
             
             ExternalInterface.call('JSiON.__onLoad', SiONDriver.VERSION);
@@ -54,29 +55,42 @@ package {
         
     // call javascript
     //--------------------------------------------------
-        private function _onError(e:ErrorEvent)          : void { _error(e.text); }
-        private function _onLoadingProgress(e:ProgressEvent) : void { ExternalInterface.call('JSiON.__onLoadingProgress'); }
-        private function _onStreamStart(e:SiONEvent)     : void { ExternalInterface.call('JSiON.__onStreamStart'); }
-        private function _onStreamStop(e:SiONEvent)      : void { ExternalInterface.call('JSiON.__onStreamStop'); }
-        private function _onFadeInComplete(e:SiONEvent)  : void { ExternalInterface.call('JSiON.__onFadeInComplete'); }
-        private function _onFadeOutComplete(e:SiONEvent) : void { ExternalInterface.call('JSiON.__onFadeOutComplete'); }
-        private function _onChangeBPM(e:SiONTrackEvent)  : void { ExternalInterface.call('JSiON.__onChangeBPM', driver.bpm); }
+        private function _onError(e:ErrorEvent) : void {
+            _error(e.text);
+        }
+
+        private function _onStreamStart(e:SiONEvent) : void {
+            _applyMuteTable2Driver();
+            ExternalInterface.call('JSiON.__onStreamStart', driver.trackCount);
+        }
+
+        private function _onStreamStop(e:SiONEvent) : void {
+            ExternalInterface.call('JSiON.__onStreamStop');
+        }
+
+        private function _onChangeBPM(e:SiONTrackEvent) : void {
+            ExternalInterface.call('JSiON.__onChangeBPM', driver.bpm);
+        }
+
+        private function _onLoadingProgress(e:ProgressEvent) : void {
+            ExternalInterface.call('JSiON.__onLoadingProgress', e.bytesLoaded, e.bytesTotal);
+        }
+
+        private function _onLoadingError(e:ErrorEvent) : void {
+            ExternalInterface.call('JSiON.__onLoadingError', e.text); 
+        }        
         
-        
+
     // callback from javascript
     //--------------------------------------------------
         private function _play(...args) : void {
             var fadeTime:Number = Number(args[1]);
             driver.fadeIn((isNaN(fadeTime)) ? 0 : fadeTime);
-            mml = String(args[0]);
-            MMLTalksParser.parseMTSystemCommandBeforeCompile(mml, _onAllSoundLoaded);
+            MMLTalksParser.compile(String(args[0]), _onCompileComplete, sionData);
         }
 
-        private function _onAllSoundLoaded() : void {
-            driver.compile(mml, sionData);
-            MMLTalksParser.parseMTSystemCommandAfterCompile(sionData);
-            mml = null;
-            driver.play(sionData);
+        private function _onCompileComplete(data:SiONData) : void {
+            driver.play(data);
         }
         
         private function _stop(...args) : void {
@@ -125,10 +139,38 @@ package {
             return ret;
         }
 
+        private function _applymutetable(...args) : void {
+            if (args.length == 0) {
+                muteTable = null;
+            } else {
+                if (args[0] is Array) {
+                    muteTable = args[0] as Array;
+                }
+            }
+
+            if (driver.isPlaying) _applyMuteTable2Driver();
+        }
+
         
+
 
     // internal use
     //--------------------------------------------------
+        private function _applyMuteTable2Driver() : void {
+            var imax:int = driver.trackCount, i:int;
+            if (muteTable == null) {
+                for (i=0; i<imax; i++) {
+                    driver.sequencer.tracks[i].mute = false;
+                }
+            } else {            
+                if (imax > muteTable.length) imax = muteTable.length;
+                for (i=0; i<imax; i++) {
+                    driver.sequencer.tracks[i].mute = muteTable[i] as Boolean;
+                }
+            }
+        }
+
+
         private function _getPresetMML(key:*) : String {
             if (key is String) {
                 var res:* = presetVoice[key as String];

@@ -16,15 +16,15 @@
 
     <!--List of SWC files or directories to compile against but to omit from-->
     <external-library-path>
-      <path-element>C:/usr/bin/apache_flex_sdk/frameworks/libs/player/11.9/playerglobal.swc</path-element>
+      <path-element>C:/usr/bin/apache_flex_sdk/frameworks/libs/player/20.0/playerglobal.swc</path-element>
     </external-library-path>
 
     <!--Additional including path of *.swc files-->
     <library-path>
       <path-element>C:/usr/bin/apache_flex_sdk/frameworks/libs</path-element>
-      <path-element>C:/usr/bin/apache_flex_sdk/frameworks/libs/player/11.9</path-element>
+      <path-element>C:/usr/bin/apache_flex_sdk/frameworks/libs/player/20.0</path-element>
       <path-element>C:/usr/bin/apache_flex_sdk/frameworks/locale/{locale}</path-element>
-      <path-element>../../flex/_lib/_swc</path-element>
+      <path-element>../../../flex/_lib/_swc</path-element>
     </library-path>
 
     <!--Additional including path of *.as files-->
@@ -32,23 +32,21 @@
       <path-element>.</path-element>
       <!--<path-element>./_lib/aszip</path-element> -->
       <!--<path-element>./_lib/sion</path-element> -->
-      <!--<path-element>./_lib/spark/CannonML/trunk/src</path-element> -->
-      <!--<path-element>./_lib/spark/SiGL/trunk/src</path-element> -->
     </source-path>
   </compiler>
 
   <metadata>
-    <title>main</title>
-    <description>http://www.yomogi.sakura.ne.jp/~si</description>
-    <publisher>SolidImage</publisher>
-    <creator>keim</creator>
+    <title>jsion</title>
+    <description>http://soundimpulse.sakura.ne.jp/</description>
+    <publisher>soundimpulse</publisher>
+    <creator>keim_at_si</creator>
     <language>ja-JP</language>
   </metadata>
 
   <default-size>
-    <width>465</width>
-    <height>465</height>
+    <width>1</width>
+    <height>1</height>
   </default-size>
-  <default-frame-rate>60</default-frame-rate>
+  <default-frame-rate>20</default-frame-rate>
   <default-background-color>0xffffff</default-background-color>
 </flex-config>
