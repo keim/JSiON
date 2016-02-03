@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>SiON MML Editor</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+    <script src="./script/jsion.js"></script>
+    <script>
+(function(){
+  var jsion;
+
+  function _onReady() {
+    $("#play").attr("disabled", false);
+    $(".version").text(JSiON.toString());
+  }
+
+  function _play() {
+    var pos = parseInt($("#position").val());
+    if (pos > 0) jsion.position(pos);
+    jsion.play($("#mml").val());
+    return false;
+  }
+
+  function _stop() {
+    jsion.stop();
+    return false;
+  }
+
+  function _onStreamStart() {
+    $("#stop").show();
+    $("#play").hide();
+  }
+
+  function _onStreamStop() {
+    $("#stop").hide();
+    $("#play").show();
+  }
+
+  $(function(){
+    JSiON.swfURL = "./script/jsion.swf";
+    jsion = new JSiON(_onReady);
+    jsion.onStreamStart = _onStreamStart;
+    jsion.onStreamStop  = _onStreamStop;
+    $("#play").click(_play).attr("disabled", true);
+    $("#stop").click(_stop).hide();
+    $("#mute").val();
+  })
+})();
+    </script>
+  </head>
+
+  <body>
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        SiON MML Editor (<span class="version">Loading SiON module ...</span>)
+      </div>
+      <div class="panel-body">
+        <form class="form-inline">
+          <div class="form-group">
+            <button type="button" class="btn btn-primary" id="play"><span class="glyphicon glyphicon-play"></span> Play</button>
+            <button type="button" class="btn btn-warning" id="stop"><span class="glyphicon glyphicon-stop"></span> Stop</button>
+          </div>
+          <div class="form-group">
+            <label for="position">Position</label>
+            <input type="input" class="form-control" id="position" placeholder="0"/>[ms]
+          </div>
+          <div style="float:right;">
+            <a class="btn btn-default" href="http://keim.github.io/sion/mmlref/" target="_blank">MML Reference</a>
+          </div>
+        </form>
+        <br/>
+
+        <form>
+          <div class="form-group">
+            <textarea class="form-control" rows="20" id="mml" placeholder="write mml here"></textarea>
+          </div>
+        </form>
+
+        <form class="form-inline">
+          <select class="form-control" id="mute">
+            <option value="mute">Mute</option>
+            <option value="solo">Solo</option>
+          </select>
+          <div class="btn-group" id="track" data-toggle="buttons">
+            <label class="btn btn-default"><input type="checkbox" autocomplete="off">1</label>
+            <label class="btn btn-default"><input type="checkbox" autocomplete="off">2</label>
+            <label class="btn btn-default"><input type="checkbox" autocomplete="off">3</label>
+            <label class="btn btn-default"><input type="checkbox" autocomplete="off">4</label>
+            <label class="btn btn-default"><input type="checkbox" autocomplete="off">5</label>
+            <label class="btn btn-default"><input type="checkbox" autocomplete="off">6</label>
+            <label class="btn btn-default"><input type="checkbox" autocomplete="off">7</label>
+            <label class="btn btn-default"><input type="checkbox" autocomplete="off">8</label>
+            <label class="btn btn-default"><input type="checkbox" autocomplete="off">9</label>
+            <label class="btn btn-default"><input type="checkbox" autocomplete="off">10</label>
+            <label class="btn btn-default"><input type="checkbox" autocomplete="off">11</label>
+            <label class="btn btn-default"><input type="checkbox" autocomplete="off">12</label>
+            <label class="btn btn-default"><input type="checkbox" autocomplete="off">13</label>
+            <label class="btn btn-default"><input type="checkbox" autocomplete="off">14</label>
+            <label class="btn btn-default"><input type="checkbox" autocomplete="off">15</label>
+            <label class="btn btn-default"><input type="checkbox" autocomplete="off">16</label>
+            <label class="btn btn-default"><input type="checkbox" autocomplete="off">17~</label>
+          </div>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

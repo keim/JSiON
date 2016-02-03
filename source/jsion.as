@@ -12,14 +12,26 @@ package {
     import org.si.sion.utils.*;
     
 
+    /** jsion: simple bridge to play SiON MML in javascript */
     public class jsion extends Sprite {
+        /** SiON Driver to play */
         public var driver:SiONDriver = new SiONDriver();
+
+        /** Presetvoice access from JSiON.presetVoiceMML() */
         public var presetVoice:SiONPresetVoice = new SiONPresetVoice();
-        public var soundTable:* = {};
+
+        /** compiled SiONData */
         public var sionData:SiONData;
+
+        /** list of muting track */
         public var muteTable:Array;
 
 
+        
+        
+    // constructor
+    //--------------------------------------------------
+        /** constructor */
         function jsion() {
             Security.allowDomain("*");
             
@@ -59,22 +71,27 @@ package {
             _error(e.text);
         }
 
+
         private function _onStreamStart(e:SiONEvent) : void {
             _applyMuteTable2Driver();
             ExternalInterface.call('JSiON.__onStreamStart', driver.trackCount);
         }
 
+
         private function _onStreamStop(e:SiONEvent) : void {
             ExternalInterface.call('JSiON.__onStreamStop');
         }
+
 
         private function _onChangeBPM(e:SiONTrackEvent) : void {
             ExternalInterface.call('JSiON.__onChangeBPM', driver.bpm);
         }
 
+
         private function _onLoadingProgress(e:ProgressEvent) : void {
             ExternalInterface.call('JSiON.__onLoadingProgress', e.bytesLoaded, e.bytesTotal);
         }
+        
 
         private function _onLoadingError(e:ErrorEvent) : void {
             ExternalInterface.call('JSiON.__onLoadingError', e.text); 
@@ -89,15 +106,18 @@ package {
             MMLTalksParser.compile(String(args[0]), _onCompileComplete, sionData);
         }
 
+
         private function _onCompileComplete(data:SiONData) : void {
             driver.play(data);
         }
         
+
         private function _stop(...args) : void {
             var fadeTime:Number = Number(args[0]);
-            if (!isNaN(fadeTime)) driver.fadeOut(fadeTime);
+            if (!isNaN(fadeTime) && fadeTime>0) driver.fadeOut(fadeTime);
             else driver.stop();
         }
+
         
         private function _volume(...args) : * {
             var vol:Number = Number(args[0]);
@@ -105,27 +125,32 @@ package {
             return driver.volume;
         }
     
+
         private function _pan(...args) : * {
             var pan:Number = Number(args[0]);
             if (!isNaN(pan)) driver.pan = (pan<-1) ? -1 : (pan>1) ? 1 : pan;
             return driver.pan;
         }
-        
+
+
         private function _position(...args) : * {
             var pos:Number = Number(args[0]);
             if (!isNaN(pos)) driver.position = pos;
             return driver.position;
         }
         
+
         private function _bpm(...args) : * {
             var bpm:Number = Number(args[0]);
             if (!isNaN(bpm)) driver.bpm = bpm;
             return driver.bpm;
         }
 
+
         private function _error(text:String) : void { 
             ExternalInterface.call('JSiON.__onError', text);
         }
+
 
         private function _loadsound(...args) : * {
             if (args[0] is String) {
@@ -133,11 +158,13 @@ package {
             }
         }
         
+
         private function _presetvoice(...args) : * {
             var ret:String = _getPresetMML(args[0]);
-            if (ret == "") _error("SiONPresetVoice: key string not available")
+            if (ret == "") _error("SiONPresetVoice: key string not available");
             return ret;
         }
+
 
         private function _applymutetable(...args) : void {
             if (args.length == 0) {
