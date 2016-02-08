@@ -36,10 +36,10 @@ JSiON.prototype = {
 
 
 //---------- 
-JSiON.VERSION = '0.1.1';
+JSiON.VERSION = '0.2.0';
 JSiON.SWF_VERSION = 'SWF has not loaded.';
-JSiON.toString = function() { return 'JSiON_VERSION:' + JSiON.VERSION + '/ SWF_VERSION: ' + JSiON.SWF_VERSION; };
-JSiON.domElementID = 'JSiON_DOM_ELEMENT';
+JSiON.toString = function() { return 'VERSION=' + JSiON.VERSION + ' / SWF_VERSION=' + JSiON.SWF_VERSION; };
+JSiON.domElementID = 'JSiON-DOM-ELEMENT';
 JSiON.driver = undefined;
 JSiON.mutex = undefined;
 JSiON.swfURL = 'jsion.swf';

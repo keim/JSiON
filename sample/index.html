@@ -11,7 +11,7 @@
     <script src="./script/jsion.js"></script>
     <script>
 (function(){
-  var jsion;
+  var jsion, isSolo, muteTable = new Array(100);
 
   function _onReady() {
     $("#play").attr("disabled", false);
@@ -40,6 +40,67 @@
     $("#play").show();
   }
 
+  function _onChangeTrackMode() {
+    if ($("#mute").val()=='mute') {
+      $("#mute-track").show();
+      $("#solo-track").hide();
+      isSolo = false;
+    } else {
+      $("#mute-track").hide();
+      $("#solo-track").show();
+      isSolo = true;
+    }
+    $("#mute-track>label,#solo-track>label").removeClass('active');
+    _updateMuteTable();
+  }
+
+  function _updateMuteTable() {
+    var $label, i, track, mutetrack17;
+
+    if (isSolo) {
+    } else {
+    }
+    jsion.applyMuteTable(muteTable);
+  }
+
+  function __checkMuteTrack() {
+    var $label, mutetrack17, i;
+
+    $label = $("#mute-track>label");
+    mutetrack17 = $label.eq(16).hasClass('active');
+
+    for (i=0; i<16; i++) {
+      muteTable[i] = $label.eq(i).hasClass('active');
+    }
+    for (i=16; i<100; i++) {
+      muteTable[i] = mutetrack17;
+    }
+  }
+
+  function __checkSoloTrack() {
+    var $label, solotrack, i;
+
+    $label = $("#solo-track>label");
+
+    solotrack = -1;
+    for (i=0; i<16; i++) {
+      if ($label.eq(i).hasClass('active')) {
+        solotrack = i;
+        break;
+      }
+    }
+
+    if (solotrack == -1) {
+      for (i=0; i<100; i++) {
+        muteTable[i] = false;
+      }
+    } else {
+      for (i=0; i<100; i++) {
+        muteTable[i] = (solotrack != i);
+      }
+    }
+  }
+
   $(function(){
     JSiON.swfURL = "./script/jsion.swf";
     jsion = new JSiON(_onReady);
@@ -47,8 +108,10 @@
     jsion.onStreamStop  = _onStreamStop;
     $("#play").click(_play).attr("disabled", true);
     $("#stop").click(_stop).hide();
-    $("#mute").val();
-  })
+    isSolo = false;
+    $("#mute").on("change", _onChangeTrackMode);
+    $("#mml").height($(window).height() - 240);
+  });
 })();
     </script>
   </head>
@@ -85,7 +148,7 @@
             <option value="mute">Mute</option>
             <option value="solo">Solo</option>
           </select>
-          <div class="btn-group" id="track" data-toggle="buttons">
+          <div class="btn-group" id="mute-track" data-toggle="buttons">
             <label class="btn btn-default"><input type="checkbox" autocomplete="off">1</label>
             <label class="btn btn-default"><input type="checkbox" autocomplete="off">2</label>
             <label class="btn btn-default"><input type="checkbox" autocomplete="off">3</label>
@@ -103,6 +166,24 @@
             <label class="btn btn-default"><input type="checkbox" autocomplete="off">15</label>
             <label class="btn btn-default"><input type="checkbox" autocomplete="off">16</label>
             <label class="btn btn-default"><input type="checkbox" autocomplete="off">17~</label>
+          </div>
+          <div class="btn-group" id="solo-track" data-toggle="buttons" style="display:none;">
+            <label class="btn btn-default"><input type="radio" autocomplete="off">1</label>
+            <label class="btn btn-default"><input type="radio" autocomplete="off">2</label>
+            <label class="btn btn-default"><input type="radio" autocomplete="off">3</label>
+            <label class="btn btn-default"><input type="radio" autocomplete="off">4</label>
+            <label class="btn btn-default"><input type="radio" autocomplete="off">5</label>
+            <label class="btn btn-default"><input type="radio" autocomplete="off">6</label>
+            <label class="btn btn-default"><input type="radio" autocomplete="off">7</label>
+            <label class="btn btn-default"><input type="radio" autocomplete="off">8</label>
+            <label class="btn btn-default"><input type="radio" autocomplete="off">9</label>
+            <label class="btn btn-default"><input type="radio" autocomplete="off">10</label>
+            <label class="btn btn-default"><input type="radio" autocomplete="off">11</label>
+            <label class="btn btn-default"><input type="radio" autocomplete="off">12</label>
+            <label class="btn btn-default"><input type="radio" autocomplete="off">13</label>
+            <label class="btn btn-default"><input type="radio" autocomplete="off">14</label>
+            <label class="btn btn-default"><input type="radio" autocomplete="off">15</label>
+            <label class="btn btn-default"><input type="radio" autocomplete="off">16</label>
           </div>
         </form>
       </div>
