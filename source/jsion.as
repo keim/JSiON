@@ -17,9 +17,6 @@ package {
         /** SiON Driver to play */
         public var driver:SiONDriver = new SiONDriver();
 
-        /** Presetvoice access from JSiON.presetVoiceMML() */
-        public var presetVoice:SiONPresetVoice = new SiONPresetVoice();
-
         /** compiled SiONData */
         public var sionData:SiONData;
 
@@ -48,22 +45,20 @@ package {
             ExternalInterface.addCallback("_pause",   driver.pause);
             ExternalInterface.addCallback("_resume",  driver.play);
             ExternalInterface.addCallback("_volume",  _volume);
-            ExternalInterface.addCallback("_pan",     _pan);
             ExternalInterface.addCallback("_position",_position);
-            ExternalInterface.addCallback("_bpm",     _bpm);
             ExternalInterface.addCallback("_loadsound",   _loadsound);
-            ExternalInterface.addCallback("_presetvoice", _presetvoice);
             ExternalInterface.addCallback("_applymutetable", _applymutetable);
 
             // register handlers
-            driver.addEventListener(ErrorEvent.ERROR,             _onError);
-            driver.addEventListener(SiONEvent.STREAM_START,       _onStreamStart);
-            driver.addEventListener(SiONEvent.STREAM_STOP,        _onStreamStop);
-            driver.addEventListener(SiONTrackEvent.CHANGE_BPM,    _onChangeBPM);
+            driver.addEventListener(ErrorEvent.ERROR,       _onError);
+            driver.addEventListener(SiONEvent.STREAM_START, _onStreamStart);
+            driver.addEventListener(SiONEvent.STREAM_STOP,  _onStreamStop);
             
             ExternalInterface.call('JSiON.__onLoad', SiONDriver.VERSION);
         }
         
+
+
         
     // call javascript
     //--------------------------------------------------
@@ -83,11 +78,6 @@ package {
         }
 
 
-        private function _onChangeBPM(e:SiONTrackEvent) : void {
-            ExternalInterface.call('JSiON.__onChangeBPM', driver.bpm);
-        }
-
-
         private function _onLoadingProgress(e:ProgressEvent) : void {
             ExternalInterface.call('JSiON.__onLoadingProgress', e.bytesLoaded, e.bytesTotal);
         }
@@ -97,6 +87,8 @@ package {
             ExternalInterface.call('JSiON.__onLoadingError', e.text); 
         }        
         
+
+
 
     // callback from javascript
     //--------------------------------------------------
@@ -119,31 +111,15 @@ package {
         }
 
         
-        private function _volume(...args) : * {
+        private function _volume(...args) : void {
             var vol:Number = Number(args[0]);
             if (!isNaN(vol)) driver.volume = (vol<0) ? 0 : (vol>1) ? 1 : vol;
-            return driver.volume;
-        }
-    
-
-        private function _pan(...args) : * {
-            var pan:Number = Number(args[0]);
-            if (!isNaN(pan)) driver.pan = (pan<-1) ? -1 : (pan>1) ? 1 : pan;
-            return driver.pan;
         }
 
 
-        private function _position(...args) : * {
+        private function _position(...args) : void {
             var pos:Number = Number(args[0]);
             if (!isNaN(pos)) driver.position = pos;
-            return driver.position;
-        }
-        
-
-        private function _bpm(...args) : * {
-            var bpm:Number = Number(args[0]);
-            if (!isNaN(bpm)) driver.bpm = bpm;
-            return driver.bpm;
         }
 
 
@@ -157,22 +133,13 @@ package {
                 MMLTalksParser.setURL(args[0] as String);
             }
         }
-        
-
-        private function _presetvoice(...args) : * {
-            var ret:String = _getPresetMML(args[0]);
-            if (ret == "") _error("SiONPresetVoice: key string not available");
-            return ret;
-        }
 
 
         private function _applymutetable(...args) : void {
             if (args.length == 0) {
                 muteTable = null;
             } else {
-                if (args[0] is Array) {
-                    muteTable = args[0] as Array;
-                }
+                muteTable = (args[0] as String).split(",");
             }
 
             if (driver.isPlaying) _applyMuteTable2Driver();
@@ -195,23 +162,6 @@ package {
                     driver.sequencer.tracks[i].mute = muteTable[i] as Boolean;
                 }
             }
-        }
-
-
-        private function _getPresetMML(key:*) : String {
-            if (key is String) {
-                var res:* = presetVoice[key as String];
-                if (res is Array) {
-                    var ret:Array = [];
-                    for (var i:int=0; i<res.length; i++) {
-                        ret[i] = JSON.stringify(res[i].getMML());
-                    }
-                    return JSON.stringify(ret);
-                } else if (res is SiONVoice) {
-                    return res.getMML();
-                }
-            }
-            return "";
         }
     }
 }

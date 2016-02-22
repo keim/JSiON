@@ -12,18 +12,15 @@ JSiON.prototype = {
     isPaused : false,
     trackCount : 0,
 //----- setter/getter
-    volume   : function() { return JSiON.driver._volume(arguments[0]); },
-    pan      : function() { return JSiON.driver._pan(arguments[0]); },
-    position : function() { return JSiON.driver._position(arguments[0]); },
-    bpm      : function() { return JSiON.driver._bpm(arguments[0]); },
+    volume   : function() { JSiON.driver._volume(arguments[0]); },
+    position : function() { JSiON.driver._position(arguments[0]); },
 //----- operation
     play     : function(mml, fadeInTime) { JSiON.driver._play(mml, fadeInTime); },
     stop     : function(fadeOutTime) { JSiON.driver._stop(fadeOutTime); },
     pause    : function() { isPaused = true; JSiON.driver._pause(); },
     resume   : function() { isPaused = false; JSiON.driver._resume(); },
     loadSound: function(url) { JSiON.driver._loadsound(url); },
-    applyMuteTable : function(table) { JSiON.driver._applymutetable(table); },
-    presetVoiceMML : function(key) { return JSiON.driver._presetvoice(key); },
+    applyMuteTable : function(table) { JSiON.driver._applymutetable(table.join(',')); },
 //----- event handler
     onLoad : function() {},
     onStreamStart : function() {},
@@ -36,7 +33,7 @@ JSiON.prototype = {
 
 
 //---------- 
-JSiON.VERSION = '0.1.1';
+JSiON.VERSION = '0.1.2';
 JSiON.SWF_VERSION = 'SWF has not loaded.';
 JSiON.toString = function() { return 'JSiON_VERSION:' + JSiON.VERSION + '/ SWF_VERSION: ' + JSiON.SWF_VERSION; };
 JSiON.domElementID = 'JSiON_DOM_ELEMENT';
@@ -88,7 +85,6 @@ JSiON.__onStreamStop = function() {
     JSiON.mutex.trackCount = 0;
 };
 
-JSiON.__onChangeBPM       = function(bpm) { JSiON.mutex.onChangeBPM.call(JSiON.mutex, bpm); };
 JSiON.__onError           = function(text) { JSiON.mutex.onError.call(JSiON.mutex, text); };
 JSiON.__onLoadingProgress = function(loaded, total) { JSiON.mutex.onLoadingProgress.call(JSiON.mutex, loaded, total) };
 JSiON.__onLoadingError    = function(text) { JSiON.mutex.onLoadingError.call(JSiON.mutex, text) };
