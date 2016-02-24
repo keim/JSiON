@@ -69,7 +69,7 @@ function getFlashPlayerVersion(subs) {
 
 //---------- callback functions from swf
 JSiON.__onLoad = function(version) {
-    JSiON.SWF_VERSIOPM = version;
+    JSiON.SWF_VERSION = version;
     JSiON.driver = document.getElementById(JSiON.domElementID);
     JSiON.mutex.isReady = true;
     JSiON.mutex.onLoad.call(JSiON.mutex);
