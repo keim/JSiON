@@ -18,7 +18,7 @@ function setup(){
     // JSiON.swfURL = "./swf/jsion.swf";
 
     // create instance with event handler
-    var jsion = new JSiON(onSWFReady);
+    jsion = new JSiON(onSWFReady);
 }
 
 // ready to use

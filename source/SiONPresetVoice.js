@@ -44,7 +44,7 @@ function SiONPresetVoice() {
 		_new(k,n, _p("#@0{0,0,0; %2d; %2d,0,0,%2d,0,0; 0,0; 1,0,0; 2,0,0}s,",[ws,ar,rr],0)+String(sw)+"@f"+String(cut)+","+String(res)+";");
 	}
 	function _WTV(k,n, ws, ar, dr, sr, rr, sl, tl, mul) {
-		_new(k,n, _wavb[ws]+_p("#@0{0,0,0; %2d; %2d,%2d,%2d,%2d,%2d,%2d; 0,0; %2d,0,0; 2,0,0};",[ws+256,ar,dr,sr,rr,sl,tl,mul],0));
+		_new(k,n, _wavb[ws]+_p("#@0{0,0,0; %3d; %2d,%2d,%2d,%2d,%2d,%2d; 0,0; %2d,0,0; 2,0,0};",[ws+256,ar,dr,sr,rr,sl,tl,mul],0));
 	}
 	function _SVP(k,n, ws, ar, dr, sr, rr, sl, tl, sw, mul) {
 		_new(k,n, _wavb[ws]+_p("#@0{0,0,0; %2d; %2d,%2d,%2d,%2d,%2d,%2d; 0,0; "+String(mul)+",0,0; 2,0,0}s,",[ws+256,ar,dr,sr,rr,sl,tl],0)+String(sw)+";");
